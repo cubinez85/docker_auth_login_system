@@ -29,7 +29,20 @@ docker compose ps
 
 Инициализация базы данных
 # Применение миграций внутри контейнера приложения
-docker compose exec app flask db upgrade
+cd ~/docker_auth_login_system/auth_login_system/auth_system
+
+# 1. Создаём папку миграций если нет
+mkdir -p migrations
+
+# 2. Возвращаем права вашему пользователю
+sudo chown -R cubinez85:cubinez85 migrations/
+
+# 3. Даём права на запись (опционально, но надёжно)
+chmod -R 755 migrations/
+
+# 4. Проверяем
+ls -la migrations/
+# Ожидаемый вывод: права на запись для cubinez85
 
 # Опционально: создание администратора или тестовых данных
 # docker compose exec app python scripts/seed_demo.py
@@ -37,6 +50,32 @@ docker compose exec app flask db upgrade
 Проверка работоспособности
 # Health check приложения
 curl -s http://127.0.0.1:8084/api/health/ | python3 -m json.tool
+
+🚀 Теперь применяем миграции
+# 1. Инициализация (если папка migrations пустая)
+docker compose exec app flask db init
+
+# 2. Создание миграции
+docker compose exec app flask db migrate -m "Initial migration"
+
+# 3. Применение миграции
+docker compose exec app flask db upgrade
+
+🔄 На будущее: чтобы не было проблем с правами
+Вариант 1: Добавить user: "1000:1000" в docker-compose.yml
+
+services:
+  app:
+    # ...
+    user: "1000:1000"  # ← Явно указываем UID:GID вашего пользователя
+    volumes:
+      - ./migrations:/app/migrations
+
+Вариант 3: Использовать .dockerignore для исключения проблем
+Убедитесь что в .dockerignore нет строки, исключающей migrations/:
+
+
+
 
 # Тест отправки письма (проверка SMTP из контейнера)
 docker compose exec app python -c "
