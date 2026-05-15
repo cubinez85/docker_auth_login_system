@@ -1,0 +1,40 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>🔑 Создание разрешения</h2>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Resource + Action</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('permission_create.index') }}">
+                <div class="mb-3">
+                    <label for="resource_id" class="form-label">Ресурс *</label>
+                    <select class="form-select" id="resource_id" name="resource_id" required>
+                        <option value="">-- Выберите ресурс --</option>
+                        {% for resource in resources %}
+                            <option value="{{ resource.id }}">{{ resource.name }} — {{ resource.description or '' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="action_id" class="form-label">Действие *</label>
+                    <select class="form-select" id="action_id" name="action_id" required>
+                        <option value="">-- Выберите действие --</option>
+                        {% for action in actions %}
+                            <option value="{{ action.id }}">{{ action.name }} — {{ action.description or '' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="alert alert-info">
+                    <strong>💡 Результат:</strong> <code>resource:action</code> (например: <code>projects:create</code>)
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">✅ Создать разрешение</button>
+                    <a href="{{ url_for('permission_list.index_view') }}" class="btn btn-secondary btn-lg">← Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

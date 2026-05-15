@@ -1,0 +1,43 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>👤→🔑 Индивидуальное разрешение пользователю</h2>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Выбор пользователя, разрешения и доступа</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('userpermission_create.index') }}">
+                <div class="mb-3">
+                    <label for="user_id" class="form-label">Пользователь *</label>
+                    <select class="form-select" id="user_id" name="user_id" required>
+                        <option value="">-- Выберите пользователя --</option>
+                        {% for user in users %}
+                            <option value="{{ user.id }}">{{ user.email }} ({{ user.get_full_name() }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="permission_id" class="form-label">Разрешение *</label>
+                    <select class="form-select" id="permission_id" name="permission_id" required>
+                        <option value="">-- Выберите разрешение --</option>
+                        {% for perm in permissions %}
+                            <option value="{{ perm.id }}">{{ perm.resource.name }}:{{ perm.action.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3 form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="granted" name="granted" checked>
+                    <label class="form-check-label" for="granted">
+                        <strong>Разрешить</strong> доступ (снимите галочку для явного запрета)
+                    </label>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">✅ Назначить разрешение</button>
+                    <a href="{{ url_for('userpermission_list.index_view') }}" class="btn btn-secondary btn-lg">← Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

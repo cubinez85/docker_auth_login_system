@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.pyo
+
+# Virtual environments
+venv/
+env/
+.venv/
+env.bak/
+venv.bak/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+htmlcov/
+.coverage
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.docker/
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tests
+.pytest_cache/
+tests/
+*.egg-info/
+
+# Local config (не копируем .env в образ — монтируем при запуске)
+.env
+.env.local

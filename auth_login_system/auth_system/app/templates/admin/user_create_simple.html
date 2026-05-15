@@ -1,0 +1,98 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>➕ Создание пользователя</h2>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Информация о пользователе</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('user_create.index') }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               required placeholder="user@example.com">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label">Пароль *</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               required minlength="8" placeholder="Минимум 8 символов">
+                        <small class="form-text text-muted">
+                            Минимум 8 символов, заглавные и строчные буквы, цифры
+                        </small>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Подтверждение пароля *</label>
+                    <input type="password" class="form-control" id="confirm_password" 
+                           name="confirm_password" required>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="last_name" class="form-label">Фамилия *</label>
+                        <input type="text" class="form-control" id="last_name" 
+                               name="last_name" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="first_name" class="form-label">Имя *</label>
+                        <input type="text" class="form-control" id="first_name" 
+                               name="first_name" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="middle_name" class="form-label">Отчество</label>
+                        <input type="text" class="form-control" id="middle_name" 
+                               name="middle_name">
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="is_superuser" name="is_superuser">
+                            <label class="form-check-label" for="is_superuser">
+                                <strong>Суперпользователь</strong> (полный доступ)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="is_active" name="is_active" checked>
+                            <label class="form-check-label" for="is_active">
+                                <strong>Активен</strong> (может входить в систему)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        ✅ Создать пользователя
+                    </button>
+                    <a href="{{ url_for('user_list.index_view') }}" class="btn btn-secondary btn-lg">
+                        ← Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="alert alert-info mt-4">
+        <strong>💡 Подсказка:</strong> После создания пользователя вы можете назначить ему 
+        роли в разделе <a href="{{ url_for('userrole_list.index_view') }}">User Roles</a>.
+    </div>
+</div>
+
+<style>
+.form-label { font-weight: 500; }
+.card-header h5 { margin: 0; }
+</style>
+{% endblock %}

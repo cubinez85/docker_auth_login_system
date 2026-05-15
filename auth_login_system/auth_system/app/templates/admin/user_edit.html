@@ -1,0 +1,95 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>✏️ Редактирование пользователя</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Информация о пользователе</h5>
+        </div>
+        <div class="card-body">
+            <!-- ✅ ИСПРАВЛЕНО: используем request.path вместо url_for -->
+            <form method="POST" action="{{ request.path }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email *</label>
+                        <input type="email" class="form-control" id="email"
+                               value="{{ user.email }}" disabled>
+                        <small class="text-muted">Email нельзя изменить</small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="last_name" class="form-label">Фамилия *</label>
+                        <input type="text" class="form-control" id="last_name"
+                               name="last_name" value="{{ user.last_name }}" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="first_name" class="form-label">Имя *</label>
+                        <input type="text" class="form-control" id="first_name"
+                               name="first_name" value="{{ user.first_name }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="middle_name" class="form-label">Отчество</label>
+                        <input type="text" class="form-control" id="middle_name"
+                               name="middle_name" value="{{ user.middle_name or '' }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label">Новый пароль</label>
+                        <input type="password" class="form-control" id="password"
+                               name="password" placeholder="Оставьте пустым, чтобы не менять">
+                        <small class="text-muted">Минимум 8 символов, буквы + цифры</small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   id="is_active" name="is_active"
+                                   {% if user.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                Активен
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   id="is_superuser" name="is_superuser"
+                                   {% if user.is_superuser %}checked{% endif %}>
+                            <label class="form-check-label" for="is_superuser">
+                                Суперпользователь
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">💾 Сохранить</button>
+                    <a href="{{ url_for('user_list.index_view') }}"
+                       class="btn btn-secondary btn-lg">← Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

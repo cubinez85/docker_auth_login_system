@@ -1,0 +1,51 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>🚫 Blacklist токенов</h2>
+        <form method="POST" action="{{ url_for('token_blacklist.clear_expired') }}" onsubmit="return confirm('Удалить истёкшие токены?');">
+            <button type="submit" class="btn btn-outline-danger">🧹 Очистить истёкшие</button>
+        </form>
+    </div>
+    
+    {% if tokens %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Token (начало)</th>
+                    <th>Blacklisted</th>
+                    <th>Expires</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for token in tokens %}
+                <tr>
+                    <td>{{ token.id }}</td>
+                    <td class="font-monospace">{{ token.token[:40] }}...</td>
+                    <td>{{ token.blacklisted_on.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ token.expires_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        {% if token.expires_at < now %}
+                            <span class="badge bg-secondary">Expired</span>
+                        {% else %}
+                            <span class="badge bg-danger">Active</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">Blacklist пуст</div>
+    {% endif %}
+</div>
+
+<style>
+.font-monospace { font-family: monospace; font-size: 0.85em; }
+</style>
+{% endblock %}

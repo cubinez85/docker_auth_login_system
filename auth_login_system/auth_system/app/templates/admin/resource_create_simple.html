@@ -1,0 +1,30 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>📦 Создание ресурса</h2>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Информация о ресурсе</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('resource_create.index') }}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Название ресурса *</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           required placeholder="Например: projects, documents, reports">
+                    <small class="form-text text-muted">Будет приведено к нижнему регистру</small>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="3" placeholder="Описание ресурса"></textarea>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">✅ Создать ресурс</button>
+                    <a href="{{ url_for('resource_list.index_view') }}" class="btn btn-secondary btn-lg">← Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

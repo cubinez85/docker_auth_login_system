@@ -1,0 +1,30 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+<div class="container">
+    <h2>⚡ Создание действия</h2>
+    <div class="card mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Информация о действии</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('action_create.index') }}">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Название действия *</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           required placeholder="Например: create, read, update, delete">
+                    <small class="form-text text-muted">Будет приведено к нижнему регистру</small>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea class="form-control" id="description" name="description" 
+                              rows="3" placeholder="Описание действия"></textarea>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success btn-lg">✅ Создать действие</button>
+                    <a href="{{ url_for('action_list.index_view') }}" class="btn btn-secondary btn-lg">← Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

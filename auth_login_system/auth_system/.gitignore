@@ -1,0 +1,7 @@
+.env
+__pycache__/
+migrations/
+app/__pycache__/
+htmlcov/
+venv/
+logs/

@@ -1,0 +1,57 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Auth System Administration</h1>
+            <p class="lead">Добро пожаловать в панель управления системой аутентификации и авторизации</p>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Пользователи</h5>
+                    <p class="card-text">Управление пользователями системы</p>
+                    <a href="/admin/user/" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Роли</h5>
+                    <p class="card-text">Управление ролями и правами доступа</p>
+                    <a href="/admin/role/" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Разрешения</h5>
+                    <p class="card-text">Настройка прав доступа к ресурсам</p>
+                    <a href="/admin/permission/" class="btn btn-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <strong>Статистика системы:</strong>
+                <ul class="mt-2">
+                    <li>Пользователей: {{ count_users() }}</li>
+                    <li>Ролей: {{ count_roles() }}</li>
+                    <li>Разрешений: {{ count_permissions() }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

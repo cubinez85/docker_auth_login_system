@@ -1,0 +1,151 @@
+services:
+  # =============================================================================
+  # PostgreSQL Database
+  # =============================================================================
+  postgres:
+    image: postgres:14-alpine
+    container_name: auth_postgres
+    restart: unless-stopped
+    
+    environment:
+      POSTGRES_USER: ${DB_USER:-auth_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me_in_production}
+      POSTGRES_DB: ${DB_NAME:-auth_system}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    
+    networks:
+      - auth_network
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-auth_user} -d ${DB_NAME:-auth_system}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # =============================================================================
+  # Redis for Rate Limiting & Caching
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: auth_redis
+    restart: unless-stopped
+    
+    # Команда для повышения безопасности и надёжности
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_PASSWORD:-}
+    
+    volumes:
+      - redis_data:/data
+    
+    networks:
+      - auth_network
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    
+    # Порт только для отладки (не пробрасывать в продакшене!)
+    # ports:
+    #   - "127.0.0.1:6379:6379"
+
+  # =============================================================================
+  # Flask Application
+  # =============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auth_flask_app
+    restart: unless-stopped
+    
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    
+    env_file:
+      - .env
+    
+    environment:
+      # Database URL для подключения к контейнеру postgres
+      DATABASE_URL: postgresql://${DB_USER:-auth_user}:${DB_PASSWORD:-change_me_in_production}@postgres:5432/${DB_NAME:-auth_system}
+      
+      # Redis URL для Flask-Limiter и кэша
+      REDIS_URL: redis://redis:6379/0
+      RATELIMIT_STORAGE_URL: redis://redis:6379/0
+      
+      # Base URL для генерации ссылок
+      BASE_URL: ${BASE_URL:-http://localhost:8084}
+      
+      # Почтовые настройки (внешний сервер)
+      MAIL_SERVER: ${MAIL_SERVER:-95.174.94.246}
+      MAIL_PORT: ${MAIL_PORT:-25}
+      
+      # Флаг для Docker-логирования
+      RUNNING_IN_DOCKER: "true"
+    
+    volumes:
+      - ./logs:/app/logs
+      - ./migrations:/app/migrations
+      - ./app/static:/app/app/static:ro
+    
+    networks:
+      - auth_network
+    
+    ports:
+      - "127.0.0.1:8084:8084"
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8084/api/health/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1'
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+    name: auth_postgres_data
+  redis_data:
+    driver: local
+    name: auth_redis_data
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  auth_network:
+    driver: bridge
+    name: auth_network
